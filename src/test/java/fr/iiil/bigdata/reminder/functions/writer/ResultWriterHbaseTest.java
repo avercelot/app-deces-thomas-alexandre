@@ -54,6 +54,7 @@ public class ResultWriterHbaseTest {
                 .option(HBaseTableCatalog.tableCatalog(), catalog)
                 .format("org.apache.spark.sql.execution.datasources.hbase")
                 .load();
+
         Dataset<ActeDeces> actual = tmpds.as(Encoders.bean(ActeDeces.class));
 
         assertThat(actual.collectAsList()).containsExactlyInAnyOrder(expected);

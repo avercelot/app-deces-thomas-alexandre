@@ -1,5 +1,6 @@
 package fr.iiil.bigdata.reminder.functions.writer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import fr.iiil.bigdata.reminder.bean.ActeDeces;
@@ -10,10 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.execution.datasources.hbase.HBaseTableCatalog;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.function.Consumer;
+
 
 @Slf4j
 @Builder
@@ -23,6 +24,7 @@ public class ResultWriterHbase implements Consumer<Dataset<ActeDeces>> {
     private  final EnumOutputFormat enumOutputFormat;
     private static final Config catalogConfig = ConfigFactory.load("catalog.conf");
 
+
     public ResultWriterHbase(String outputPathStr) throws IOException {
         this(outputPathStr,EnumOutputFormat.PARQUET);
     }
@@ -30,9 +32,10 @@ public class ResultWriterHbase implements Consumer<Dataset<ActeDeces>> {
     public void accept(Dataset<ActeDeces> acteDecesDataset) {
         try {
             String catalog = new ObjectMapper().writeValueAsString(catalogConfig);
+            log.info("reading catalog={}", catalog);
             acteDecesDataset.write()
                     .option(HBaseTableCatalog.tableCatalog(), catalog)
-                    .option(HBaseTableCatalog.newTable(), "9")
+                    .option(HBaseTableCatalog.newTable(), "3")
                     .format("org.apache.spark.sql.execution.datasources.hbase")
                     .save();
             switch (enumOutputFormat) {

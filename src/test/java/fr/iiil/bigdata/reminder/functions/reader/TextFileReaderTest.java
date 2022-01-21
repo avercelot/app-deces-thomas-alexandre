@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class TextFileReaderTest {
+
     Config config = ConfigFactory.load();
     String inputPathStr = config.getString("3il.path.input");
     @Test
@@ -31,6 +32,6 @@ public class TextFileReaderTest {
     public void FileExist() throws IOException{
         TextFileReader reader = new TextFileReader("file:///Users/thoma/Documents/test.txt");
         Dataset<String> lines = reader.get();
-        assertThat(lines.isEmpty()).isTrue();
+        assertThat(lines.toJavaRDD().isEmpty()).isTrue();
     }
 }
